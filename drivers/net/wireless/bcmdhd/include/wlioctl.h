@@ -313,12 +313,6 @@ typedef struct wlc_ssid {
 	uchar		SSID[DOT11_MAX_SSID_LEN];
 } wlc_ssid_t;
 
-typedef struct wlc_ssid_ext {
-	bool       hidden;
-	uint32		SSID_len;
-	uchar		SSID[DOT11_MAX_SSID_LEN];
-} wlc_ssid_ext_t;
-
 #ifndef LINUX_POSTMOGRIFY_REMOVAL
 
 #define MAX_PREFERRED_AP_NUM     5
@@ -1749,6 +1743,7 @@ typedef struct {
 #define WL_AUTH_OPEN_SYSTEM		0	/* d11 open authentication */
 #define WL_AUTH_SHARED_KEY		1	/* d11 shared authentication */
 #define WL_AUTH_OPEN_SHARED		2	 /* try open, then shared if open failed w/rc 13 */
+
 #endif /* LINUX_POSTMOGRIFY_REMOVAL */
 
 /* Bit masks for radio disabled status - returned by WL_GET_RADIO */
