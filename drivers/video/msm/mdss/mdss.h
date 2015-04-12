@@ -130,6 +130,7 @@ struct mdss_data_type {
 	atomic_t sd_client_count;
 	u8 has_wb_ad;
 	bool idle_pc_enabled;
+	bool enable_idle_pc;
 
 	u32 rotator_ot_limit;
 	u32 mdp_irq_mask;
