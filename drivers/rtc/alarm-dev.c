@@ -44,7 +44,6 @@ do {									\
 	ANDROID_ALARM_ELAPSED_REALTIME_WAKEUP_MASK)
 
 static int alarm_opened;
-static DEFINE_MUTEX(alarm_mutex);
 static DEFINE_SPINLOCK(alarm_slock);
 static struct wakeup_source alarm_wake_lock;
 static DECLARE_WAIT_QUEUE_HEAD(alarm_wait_queue);
@@ -85,7 +84,6 @@ static long alarm_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 
 	switch (ANDROID_ALARM_BASE_CMD(cmd)) {
 	case ANDROID_ALARM_CLEAR(0):
-		mutex_lock(&alarm_mutex);
 		spin_lock_irqsave(&alarm_slock, flags);
 		alarm_dbg(IO, "alarm %d clear\n", alarm_type);
 		alarm_try_to_cancel(&alarms[alarm_type]);
@@ -100,7 +98,6 @@ static long alarm_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 			if (!copy_from_user(&new_alarm_time,
 				(void __user *)arg, sizeof(new_alarm_time)))
 				set_power_on_alarm(new_alarm_time.tv_sec, 0);
-		mutex_unlock(&alarm_mutex);
 		break;
 
 	case ANDROID_ALARM_SET_AND_WAIT(0):
@@ -110,7 +107,6 @@ static long alarm_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 			rv = -EFAULT;
 			goto err1;
 		}
-		mutex_lock(&alarm_mutex);
 		spin_lock_irqsave(&alarm_slock, flags);
 		alarm_dbg(IO, "alarm %d set %ld.%09ld\n",
 			  alarm_type,
@@ -124,7 +120,6 @@ static long alarm_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 				(ANDROID_ALARM_BASE_CMD(cmd) ==
 				 ANDROID_ALARM_SET(0)))
 			set_power_on_alarm(new_alarm_time.tv_sec, 1);
-		mutex_unlock(&alarm_mutex);
 		if (ANDROID_ALARM_BASE_CMD(cmd) !=
 						ANDROID_ALARM_SET_AND_WAIT(0))
 			break;
