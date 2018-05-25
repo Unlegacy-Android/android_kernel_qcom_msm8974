@@ -506,7 +506,7 @@ static void ffs_function_cleanup(struct android_usb_function *f)
 
 static void ffs_function_enable(struct android_usb_function *f)
 {
-	struct android_dev *dev = _android_dev;
+	struct android_dev *dev = f->android_dev;
 	struct functionfs_config *config = f->config;
 
 	config->enabled = true;
@@ -518,7 +518,7 @@ static void ffs_function_enable(struct android_usb_function *f)
 
 static void ffs_function_disable(struct android_usb_function *f)
 {
-	struct android_dev *dev = _android_dev;
+	struct android_dev *dev = f->android_dev;
 	struct functionfs_config *config = f->config;
 
 	config->enabled = false;
@@ -538,8 +538,11 @@ static int ffs_function_bind_config(struct android_usb_function *f,
 static ssize_t
 ffs_aliases_show(struct device *pdev, struct device_attribute *attr, char *buf)
 {
-	struct android_dev *dev = _android_dev;
+	struct android_dev *dev;
 	int ret;
+
+	dev = list_first_entry(&android_dev_list, struct android_dev,
+					list_item);
 
 	mutex_lock(&dev->mutex);
 	ret = sprintf(buf, "%s\n", dev->ffs_aliases);
@@ -552,8 +555,11 @@ static ssize_t
 ffs_aliases_store(struct device *pdev, struct device_attribute *attr,
 					const char *buf, size_t size)
 {
-	struct android_dev *dev = _android_dev;
+	struct android_dev *dev;
 	char buff[256];
+
+	dev = list_first_entry(&android_dev_list, struct android_dev,
+					list_item);
 
 	mutex_lock(&dev->mutex);
 
